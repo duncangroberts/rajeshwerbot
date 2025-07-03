@@ -1,0 +1,73 @@
+# NVIDIA CUDA Toolkit and cuDNN Installation Instructions for Windows
+
+This guide will help you install the necessary NVIDIA software for GPU acceleration with `llama-cpp-python`.
+
+**IMPORTANT:** Ensure you have a compatible NVIDIA GPU (e.g., RTX 3090) and up-to-date NVIDIA drivers installed.
+
+---
+
+## Step 1: Check your NVIDIA Driver and CUDA Version Compatibility
+
+1.  Open a **Command Prompt** (search for `cmd` in your Windows search bar).
+2.  Type `nvidia-smi` and press Enter.
+3.  Look for the "CUDA Version" displayed (e.g., `CUDA Version: 12.1`).
+    *   **Note this version down.** This tells you the *maximum* CUDA Toolkit version your current graphics driver supports. You must download a CUDA Toolkit version that is equal to or lower than this.
+
+---
+
+## Step 2: Download and Install NVIDIA CUDA Toolkit
+
+1.  Go to the NVIDIA CUDA Toolkit Archive: `https://developer.nvidia.com/cuda-toolkit-archive`
+2.  **Select a CUDA Toolkit version that is EQUAL TO or LOWER THAN the CUDA version you noted from `nvidia-smi` in Step 1.**
+    *   For example, if `nvidia-smi` showed `12.1`, download CUDA Toolkit 12.1 or 12.0 (but NOT 12.2 or higher).
+3.  Choose your operating system (Windows), architecture (x86_64), and installer type (usually `exe [network]` or `exe [local]` is fine).
+4.  Download the installer.
+5.  Run the downloaded installer.
+6.  Choose "Custom" installation.
+7.  **Ensure "CUDA" and "Developer Tools" components are selected.** You can typically uncheck "Visual Studio Integration" if you don't use Visual Studio.
+8.  Follow the prompts to complete the installation. This process should automatically add necessary paths to your system's environment variables.
+
+---
+
+## Step 3: Download and Install cuDNN
+
+cuDNN (CUDA Deep Neural Network library) is essential for deep learning performance.
+
+1.  Go to the NVIDIA cuDNN Download page: `https://developer.nvidia.com/cudnn/downloads`
+2.  You will need to sign up for a free NVIDIA Developer Program account if you don't have one.
+3.  **Download the cuDNN version that is compatible with the CUDA Toolkit version you just installed.**
+    *   For example, if you installed CUDA Toolkit 12.1, look for "cuDNN v8.x.x for CUDA 12.x".
+4.  Download the "cuDNN Library for Windows (x86_64)" zip file.
+5.  Extract the contents of the cuDNN zip file. You will find three folders: `bin`, `include`, and `lib`.
+6.  Navigate to your CUDA Toolkit installation directory. This is typically `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y` (where `X.Y` is your CUDA version, e.g., `v12.1`).
+7.  **Copy the contents** (the files themselves, not the folders) of the `bin` folder from the cuDNN zip into the `bin` folder of your CUDA installation (`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\bin`).
+8.  **Copy the contents** of the `include` folder from the cuDNN zip into the `include` folder of your CUDA installation (`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\include`).
+9.  **Copy the contents** of the `lib` folder from the cuDNN zip into the `lib` folder of your CUDA installation (`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\lib`).
+
+---
+
+## Step 4: Restart Your Computer
+
+*   **This is crucial!** Restart your computer to ensure all new environment variables and paths are correctly loaded by the system.
+
+---
+
+## Step 5: Reinstall `llama-cpp-python` (After CUDA/cuDNN are installed and system restarted)
+
+After completing all the above steps and restarting your computer, you will need to reinstall `llama-cpp-python` to ensure it compiles against your newly installed CUDA environment.
+
+1.  Open a **Command Prompt** in your project directory (`C:\Users\dunca\Desktop\Rajeshwerbot`).
+2.  Run the following commands:
+    ```bash
+    pip uninstall llama-cpp-python -y
+    set CMAKE_ARGS="-DLLAMA_CUBLAS=on" && set FORCE_CMAKE=1 && pip install llama-cpp-python --no-cache-dir
+    ```
+    *   The `set` commands temporarily configure environment variables for the `pip install` command, forcing CUDA compilation.
+
+---
+
+## Step 6: Verify GPU Usage
+
+1.  Run your Streamlit application: `streamlit run app.py`
+2.  **Observe the terminal output** where you ran `streamlit run app.py`. Look for messages from `llama-cpp-python` during model loading that mention `ggml_init_cublas`, `CUDA`, or `n_gpu_layers`.
+3.  Open a **separate Command Prompt window** and run `nvidia-smi -l 1`. Observe the "Util" column while Rajeshwerbot processes a query. If your GPU is being used, its utilization percentage should increase.

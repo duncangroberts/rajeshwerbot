@@ -1,0 +1,44 @@
+# Project Summary: Rajeshwerbot
+
+## Overview
+Rajeshwerbot is a local desktop application designed to provide natural language interrogation and insight generation from business data. It leverages a local Large Language Model (LLM) to allow users to ask questions in plain English about their CSV datasets. The primary goal is to democratize data analysis while ensuring complete data privacy and security by processing everything on the user's local machine.
+
+## Key Features Implemented
+*   **Data Ingestion:** Loads data from local CSV files.
+*   **Natural Language Querying:** Users can ask questions about the data.
+*   **Two-Step LLM Interaction:**
+    1.  **Code Generation:** The LLM generates Python (pandas) code to analyze the data based on the user's question and the provided data schema.
+    2.  **Code Execution:** The generated Python code is executed, and its output (the analysis result) is captured.
+    3.  **Natural Language Generation:** The LLM then uses the analysis result to formulate a concise, natural language answer.
+*   **Dynamic Schema Provision:** The application dynamically extracts and provides the LLM with detailed schema information (column names, data types, unique values for categorical columns) from the uploaded CSV to improve interpretation accuracy.
+*   **Robust Column/Value Inference:** The LLM is prompted to intelligently infer relevant column names and values from natural language queries, even if phrasing is indirect.
+*   **Consistent Output:** The Python code is instructed to print only the final, concise answer or a specific "NO_DATA_FOUND" signal.
+*   **Improved Error Handling:** Basic error handling is in place for code execution, providing more informative messages.
+*   **GPU Acceleration (Attempted):** The application attempts to offload LLM processing to the GPU using `llama-cpp-python` with `n_gpu_layers=999`.
+*   **User Experience:** Includes loading spinners with humorous messages.
+
+## Current Challenges / Next Steps
+*   **GPU Utilization:** The primary outstanding issue is ensuring the LLM consistently runs on the GPU. This requires correct installation and configuration of NVIDIA CUDA Toolkit and cuDNN on the user's system.
+*   **LLM Accuracy:** While schema provision and prompt engineering have improved, further refinement of the LLM's ability to interpret complex natural language queries and generate perfectly accurate Python analysis code is an ongoing task.
+*   **Error Handling Refinement:** Implement more sophisticated error handling and potentially a self-correction loop for the LLM if generated code fails.
+*   **Visualization:** Re-introduce data visualization as a separate, controlled feature once core natural language analysis is stable.
+*   **Exporting:** Implement features for exporting visualizations and data tables.
+*   **Conversation History:** Further develop the conversation history feature.
+
+## Project Structure
+*   `.gitignore`: Configures Git to ignore unnecessary files (e.g., model files, build artifacts).
+*   `app.py`: The main Streamlit application file containing all the logic.
+*   `model/`: Directory intended to hold the Llama 3.1 GGUF model file (`Meta-Llama-3.1-8B-Instruct-IQ2_M.gguf`).
+*   `rajeshwerbot.txt`: Original requirements document.
+*   `requirements.txt`: Lists all Python dependencies.
+*   `cuda_installation_instructions.txt`: This file, containing detailed steps for CUDA/cuDNN installation.
+*   `project_summary.txt`: This file.
+
+## How to Run
+1.  Ensure Python and pip are installed.
+2.  Install dependencies: `pip install -r requirements.txt` (after CUDA/cuDNN are set up).
+3.  Run the Streamlit app: `streamlit run app.py`
+
+---
+
+**Note:** The `Meta-Llama-3.1-8B-Instruct-IQ2_M.gguf` model file is NOT tracked by Git and must be placed manually in the `model/` directory.
